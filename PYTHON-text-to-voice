@@ -1,20 +1,8 @@
-from gtts import gTTS
-import os
+import pyttsx3
 
-def text_to_speech(text):
-    # Create a text-to-speech object
-    speech = gTTS(text=text)
+engine = pyttsx3.init()
+engine.say("Hello, world!")
+engine.runAndWait()
 
-    # Save the speech as an MP3 file
-    speech_file = "speech.mp3"
-    speech.save(speech_file)
-
-    # Play the speech file
-    os.system(f"afplay {speech_file}") # For Mac users
-    # os.system(f"start {speech_file}") # For Windows users
-
-# Example usage
-text = "Hello, how are you?"
-text_to_speech(text)
 
 # CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
