@@ -1,0 +1,17 @@
+import pyttsx3
+
+# Initialize the pyttsx3 engine
+engine = pyttsx3.init()
+
+# Set the properties of the voice
+engine.setProperty('rate', 150)  # Speed in words per minute
+engine.setProperty('volume', 1)  # Volume level (float between 0 and 1)
+
+# Get user input for the text to be read aloud
+text = input("Enter the text you want to hear: ")
+
+# Use the engine to speak the text aloud
+engine.say(text)
+engine.runAndWait()
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
