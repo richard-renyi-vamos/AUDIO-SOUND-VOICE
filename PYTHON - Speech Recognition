@@ -1,0 +1,24 @@
+import speech_recognition as sr
+
+# Initialize recognizer
+r = sr.Recognizer()
+
+# Set up microphone
+mic = sr.Microphone()
+
+# Use microphone as the source
+with mic as source:
+    r.adjust_for_ambient_noise(source)
+    print("Say something!")
+    audio = r.listen(source)
+
+# Use Google Speech Recognition
+try:
+    text = r.recognize_google(audio)
+    print(f"You said: {text}")
+except sr.UnknownValueError:
+    print("Sorry, I couldn't understand what you said.")
+except sr.RequestError as e:
+    print(f"Couldn't request results from Google Speech Recognition service; {e}")
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
