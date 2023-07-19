@@ -1,0 +1,33 @@
+import numpy as np
+import pyaudio
+
+def generate_radio_signal(frequency, duration, sample_rate):
+    t = np.linspace(0, duration, int(sample_rate * duration), False)
+    signal = np.sin(2 * np.pi * frequency * t)
+    return signal
+
+def play_radio_frequency(frequency, duration=5, sample_rate=44100):
+    signal = generate_radio_signal(frequency, duration, sample_rate)
+
+    p = pyaudio.PyAudio()
+
+    stream = p.open(format=pyaudio.paFloat32,
+                    channels=1,
+                    rate=sample_rate,
+                    output=True)
+
+    stream.write(signal.astype(np.float32).tobytes())
+
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+
+if __name__ == "__main__":
+    # Set the frequency and duration for the radio signal
+    frequency_in_hertz = 1000  # Replace this with your desired frequency in Hertz
+    duration_in_seconds = 5     # Replace this with your desired duration in seconds
+
+    play_radio_frequency(frequency_in_hertz, duration_in_seconds)
+
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
