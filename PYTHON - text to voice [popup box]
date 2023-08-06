@@ -1,0 +1,35 @@
+import tkinter as tk
+import pyttsx3
+
+def text_to_voice():
+    text = entry.get()
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
+
+def create_popup():
+    popup = tk.Toplevel(root)
+    popup.title("Enter Custom Text")
+    popup.geometry("300x150")
+    
+    label = tk.Label(popup, text="Enter your text:")
+    label.pack(pady=10)
+    
+    global entry
+    entry = tk.Entry(popup, width=30)
+    entry.pack(pady=5)
+    
+    button = tk.Button(popup, text="Transform to Voice", command=text_to_voice)
+    button.pack(pady=10)
+
+# Create the main application window
+root = tk.Tk()
+root.title("Text to Voice")
+
+# Add a button to trigger the popup
+button_open_popup = tk.Button(root, text="Open Popup", command=create_popup)
+button_open_popup.pack(pady=20)
+
+root.mainloop()
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
