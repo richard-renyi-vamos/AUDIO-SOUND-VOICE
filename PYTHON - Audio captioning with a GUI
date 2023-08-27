@@ -1,0 +1,41 @@
+import speech_recognition as sr
+import tkinter as tk
+from tkinter import Scrollbar, Text
+
+def start_listening():
+    recognizer = sr.Recognizer()
+    microphone = sr.Microphone()
+
+    with microphone as source:
+        recognizer.adjust_for_ambient_noise(source)
+        while True:
+            try:
+                audio = recognizer.listen(source, timeout=5)
+                recognized_text = recognizer.recognize_google(audio)
+                text_widget.insert(tk.END, recognized_text + "\n")
+                text_widget.see(tk.END)
+            except sr.WaitTimeoutError:
+                pass
+            except sr.UnknownValueError:
+                pass
+            except sr.RequestError as e:
+                text_widget.insert(tk.END, f"Error: {e}\n")
+                text_widget.see(tk.END)
+
+root = tk.Tk()
+root.title("Audio Captioning")
+
+text_widget = Text(root, wrap=tk.WORD, font=("Helvetica", 12))
+text_widget.pack(fill=tk.BOTH, expand=True)
+
+scrollbar = Scrollbar(root, command=text_widget.yview)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+text_widget.config(yscrollcommand=scrollbar.set)
+
+start_button = tk.Button(root, text="Start Listening", command=start_listening)
+start_button.pack()
+
+root.mainloop()
+
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
