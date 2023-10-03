@@ -1,0 +1,92 @@
+import tkinter as tk
+from tkinter import ttk
+import numpy as np
+import pyaudio
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import threading
+
+# Parameters for audio visualization
+CHUNK = 1024  # Number of audio frames per buffer
+FORMAT = pyaudio.paInt16  # Audio format
+CHANNELS = 1  # Mono audio
+RATE = 44100  # Sample rate in Hz
+
+# Create a PyAudio object
+audio = pyaudio.PyAudio()
+
+# Create a GUI window
+root = tk.Tk()
+root.title("Audio Waveform Visualization")
+
+# Create two Matplotlib figures, one for the default audio device and one for the active audio device
+fig_default, ax_default = plt.subplots(figsize=(6, 3))
+ax_default.set_ylim(-32768, 32768)
+ax_default.set_xlim(0, CHUNK)
+line_default, = ax_default.plot(np.arange(CHUNK), np.zeros(CHUNK))
+canvas_default = FigureCanvasTkAgg(fig_default, master=root)
+canvas_default.get_tk_widget().pack()
+
+fig_active, ax_active = plt.subplots(figsize=(6, 3))
+ax_active.set_ylim(-32768, 32768)
+ax_active.set_xlim(0, CHUNK)
+line_active, = ax_active.plot(np.arange(CHUNK), np.zeros(CHUNK))
+canvas_active = FigureCanvasTkAgg(fig_active, master=root)
+canvas_active.get_tk_widget().pack()
+
+# Function to update the audio waveform for the default audio device
+def update_default_audio_waveform():
+    default_stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
+    
+    while True:
+        try:
+            data = default_stream.read(CHUNK)
+            audio_data = np.frombuffer(data, dtype=np.int16)
+            line_default.set_ydata(audio_data)
+            canvas_default.draw()
+            root.update()
+        except KeyboardInterrupt:
+            break
+
+    default_stream.stop_stream()
+    default_stream.close()
+
+# Function to update the audio waveform for the active audio device
+def update_active_audio_waveform():
+    active_stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
+    
+    while True:
+        try:
+            data = active_stream.read(CHUNK)
+            audio_data = np.frombuffer(data, dtype=np.int16)
+            line_active.set_ydata(audio_data)
+            canvas_active.draw()
+            root.update()
+        except KeyboardInterrupt:
+            break
+
+    active_stream.stop_stream()
+    active_stream.close()
+
+# Create Start buttons for both audio devices
+start_default_button = ttk.Button(root, text="Start Default Device Visualization", command=update_default_audio_waveform)
+start_default_button.pack()
+
+start_active_button = ttk.Button(root, text="Start Active Device Visualization", command=update_active_audio_waveform)
+start_active_button.pack()
+
+# Create an Exit button to close the GUI
+exit_button = ttk.Button(root, text="Exit", command=root.quit)
+exit_button.pack()
+
+# Create threads for both audio devices
+default_thread = threading.Thread(target=update_default_audio_waveform)
+active_thread = threading.Thread(target=update_active_audio_waveform)
+
+root.mainloop()
+
+# Close the PyAudio object
+audio.terminate()
+
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
